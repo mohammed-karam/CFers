@@ -1,3 +1,5 @@
+import 'package:fawateery/core/theme/app_colors.dart';
+import 'package:fawateery/core/widgets/custom_app_bar.dart';
 import 'package:fawateery/features/code_compiler/data/constants/supported_languages.dart';
 import 'package:fawateery/features/code_compiler/data/models/language_model.dart';
 import 'package:fawateery/features/code_compiler/manager/cubit/code_compiler_cubit.dart';
@@ -78,16 +80,10 @@ class _CodeCompilerViewBodyState extends State<CodeCompilerViewBody> {
     );
   }
 
-  AppBar _buildAppBar() {
-    return AppBar(
-      title: const Text(
-        'Code Compiler',
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-      centerTitle: true,
-      backgroundColor: _appBarColor,
-      foregroundColor: Colors.white,
-      elevation: 0,
+  CustomAppBar _buildAppBar() {
+    return CustomAppBar(
+      title: 'Code Compiler',
+      roundedBottom: false,
       actions: [
         IconButton(
           tooltip: 'Clear code',
@@ -102,7 +98,7 @@ class _CodeCompilerViewBodyState extends State<CodeCompilerViewBody> {
 
   Widget _buildLanguageSelector() {
     return Container(
-      color: _appBarColor,
+      decoration: const BoxDecoration(gradient: AppColors.brandGradient),
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
       child: SizedBox(
         height: 38,

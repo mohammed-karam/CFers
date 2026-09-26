@@ -1,3 +1,5 @@
+import 'package:fawateery/core/theme/app_colors.dart';
+import 'package:fawateery/core/widgets/custom_app_bar.dart';
 import 'package:fawateery/features/user_details/widgets/get_rating_color.dart';
 import 'package:fawateery/features/user_rating/data/models/user_rating_model.dart';
 import 'package:fawateery/features/user_rating/manager/cubit/user_rating_cubit.dart';
@@ -33,16 +35,10 @@ class _UserRatingViewBodyState extends State<UserRatingViewBody> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F9),
-      appBar: AppBar(
-        title: Text(
-          '${widget.handle} — Contest History',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        backgroundColor: const Color(0xFF1B3B6F),
-        foregroundColor: Colors.white,
-        elevation: 0,
+      backgroundColor: AppColors.background,
+      appBar: CustomAppBar(
+        title: '${widget.handle} — Contest History',
+        roundedBottom: false,
       ),
       body: BlocBuilder<UserRatingCubit, UserRatingState>(
         builder: (context, state) {
@@ -97,7 +93,7 @@ class _UserRatingViewBodyState extends State<UserRatingViewBody> {
     final ratingColor = getRatingColor(currentRating, maxRating);
 
     return Container(
-      color: const Color(0xFF1B3B6F),
+      decoration: const BoxDecoration(gradient: AppColors.brandGradient),
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

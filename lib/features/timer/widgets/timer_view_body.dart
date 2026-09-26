@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:fawateery/core/theme/app_colors.dart';
+import 'package:fawateery/core/widgets/custom_app_bar.dart';
 import 'package:fawateery/features/timer/problem_difficulty_func.dart';
 import 'package:fawateery/features/timer/widgets/show_stuck_dialog.dart';
 import 'package:flutter/material.dart';
@@ -96,7 +98,8 @@ class _TimerViewBodyState extends State<TimerViewBody> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Timer'), centerTitle: true),
+      backgroundColor: AppColors.background,
+      appBar: const CustomAppBar(title: 'Timer'),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: SingleChildScrollView(

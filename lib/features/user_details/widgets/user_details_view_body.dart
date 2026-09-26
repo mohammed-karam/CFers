@@ -1,3 +1,5 @@
+import 'package:fawateery/core/theme/app_colors.dart';
+import 'package:fawateery/core/widgets/custom_app_bar.dart';
 import 'package:fawateery/features/code_compiler/views/code_compiler_view.dart';
 import 'package:fawateery/features/user_details/manager/cubit/user_info_cubit.dart';
 import 'package:fawateery/features/user_details/widgets/build_date_row.dart';
@@ -45,15 +47,9 @@ class _UserDetailsViewBodyState extends State<UserDetailsViewBody> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6F9),
-      appBar: AppBar(
-        title: const Text(
-          'User Profile',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        backgroundColor: const Color(0xFF1B3B6F),
-        elevation: 0,
-        foregroundColor: Colors.white,
+      appBar: CustomAppBar(
+        title: 'User Profile',
+        roundedBottom: false,
         actions: [
           IconButton(
             tooltip: 'Code Compiler',
@@ -86,7 +82,7 @@ class _UserDetailsViewBodyState extends State<UserDetailsViewBody> {
                   Container(
                     height: 150,
                     decoration: const BoxDecoration(
-                      color: Color(0xFF1B3B6F),
+                      gradient: AppColors.brandGradient,
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(24),
                         bottomRight: Radius.circular(24),
