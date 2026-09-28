@@ -23,6 +23,12 @@ class ServerFailure extends Failure {
       return ServerFailure(errorMessage: "Bad response format from server");
     } else if (exception is HttpException) {
       return ServerFailure(errorMessage: "Couldn't connect to the server");
+    } else if (exception is http.ClientException) {
+      // The request never made it: offline, a blocking proxy, or a browser
+      // refusing a cross-origin fetch.
+      return ServerFailure(
+        errorMessage: "Can't reach Codeforces — check your connection",
+      );
     } else {
       return ServerFailure(errorMessage: "Unexpected error, please try again");
     }
@@ -40,7 +46,8 @@ class ServerFailure extends Failure {
         return ServerFailure(
           errorMessage: decoded['errors'] != null
               ? decoded['errors'][0]?.toString() ?? 'Unknown error'
-              : decoded['message']?.toString() ??
+              : _messageFromErrorObject(decoded) ??
+                  decoded['message']?.toString() ??
                   decoded['Message']?.toString() ??
                   decoded['detail']?.toString() ??
                   'Request failed with status $statusCode',
@@ -64,7 +71,8 @@ class ServerFailure extends Failure {
         return ServerFailure(
           errorMessage: decoded['errors'] != null
               ? decoded['errors'][0]?.toString() ?? 'Unknown error'
-              : decoded['message']?.toString() ??
+              : _messageFromErrorObject(decoded) ??
+                  decoded['message']?.toString() ??
                   decoded['detail']?.toString() ??
                   'Request failed with status $statusCode',
         );
@@ -76,4 +84,24 @@ class ServerFailure extends Failure {
 
     }
   }
+}
+
+/// Reads `{"error": {"message": "..."}}` style payloads (used by Groq,
+/// OpenAI-compatible APIs) so students see the real reason for a failure.
+String? _messageFromErrorObject(Map<String, dynamic> decoded) {
+  final error = decoded['error'];
+  if (error is Map && error['message'] != null) {
+    return error['message'].toString();
+  }
+  return null;
+}
+
+/// The student has not pasted a Groq API key yet, so no request was sent.
+/// The UI reacts to this by opening the key prompt instead of an error box.
+class MissingApiKeyFailure extends Failure {
+  MissingApiKeyFailure()
+      : super(
+          errorMessage:
+              'Add your own Groq API key to use the AI Answer Checker.',
+        );
 }
