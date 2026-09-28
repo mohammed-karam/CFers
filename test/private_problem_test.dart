@@ -153,5 +153,45 @@ void main() {
 
       expect(tester.getSize(editor).height, greaterThan(pulledDown.height));
     });
+
+    testWidgets('the two buttons maximize each side of the split',
+        (tester) async {
+      await pumpView(tester);
+
+      final editor = find.byWidgetPredicate(
+        (widget) =>
+            widget is TextField &&
+            widget.decoration?.hintText != 'Paste a link or type a name',
+      );
+      final start = tester.getSize(editor);
+
+      await tester.tap(find.byTooltip('Maximize the page'));
+      await tester.pumpAndSettle();
+
+      final pageMax = tester.getSize(editor);
+      expect(pageMax.height, lessThan(start.height));
+
+      await tester.tap(find.byTooltip('Maximize the editor'));
+      await tester.pumpAndSettle();
+
+      final editorMax = tester.getSize(editor);
+      expect(editorMax.height, greaterThan(pageMax.height));
+      expect(editorMax.height, greaterThan(start.height));
+
+      // At an end, that side's button dims out while the other stays lit.
+      double opacityOf(String tooltip) => tester
+          .widget<Opacity>(
+            find
+                .ancestor(
+                  of: find.byTooltip(tooltip),
+                  matching: find.byType(Opacity),
+                )
+                .first,
+          )
+          .opacity;
+
+      expect(opacityOf('Maximize the editor'), 0.35);
+      expect(opacityOf('Maximize the page'), 1.0);
+    });
   });
 }
