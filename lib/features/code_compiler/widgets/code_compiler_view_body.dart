@@ -7,7 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CodeCompilerViewBody extends StatefulWidget {
-  const CodeCompilerViewBody({super.key, this.appBar, this.header});
+  const CodeCompilerViewBody({
+    super.key,
+    this.appBar,
+    this.header,
+    this.editorFlex = 1,
+  });
 
   /// Replaces the default "Code Compiler" app bar, e.g. with the name of the
   /// problem the student is solving.
@@ -15,7 +20,15 @@ class CodeCompilerViewBody extends StatefulWidget {
 
   /// Optional panel pinned directly above the language selector. The problem
   /// workspace passes the statement here so it sits next to the editor.
+  ///
+  /// When the panel is a flex child (an `Expanded`), it shares the free space
+  /// with the editor according to [editorFlex].
   final Widget? header;
+
+  /// The editor's weight when [header] claims free space too. Raised by the
+  /// private-problem screen so its browser and the editor can divide the
+  /// screen between them.
+  final int editorFlex;
 
   @override
   State<CodeCompilerViewBody> createState() => _CodeCompilerViewBodyState();
@@ -79,7 +92,7 @@ class _CodeCompilerViewBodyState extends State<CodeCompilerViewBody> {
         children: [
           if (widget.header != null) widget.header!,
           _buildLanguageSelector(),
-          Expanded(child: _buildCodeEditor()),
+          Expanded(flex: widget.editorFlex, child: _buildCodeEditor()),
           _buildStdinToggleBar(),
           if (_showStdin) _buildStdinInput(),
           _buildRunButton(),

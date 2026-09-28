@@ -162,4 +162,29 @@ void main() {
 
     expect(find.text('Theatre Square'), findsOneWidget);
   });
+
+  testWidgets('the private-problem choice opens the browser screen',
+      (tester) async {
+    await _pumpList(tester, _FakeProblemsRepo(problems: _problems()));
+
+    expect(
+      find.text('Private problem, or not on Codeforces?'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.text('Private problem, or not on Codeforces?'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Private problem'), findsWidgets);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is TextField &&
+            widget.decoration?.hintText == 'Paste a link or type a name',
+      ),
+      findsOneWidget,
+    );
+    // The compiler travels with the browser panel.
+    expect(find.text('C++'), findsOneWidget);
+  });
 }

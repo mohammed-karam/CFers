@@ -2,6 +2,7 @@ import 'package:fawateery/core/storage/solved_store.dart';
 import 'package:fawateery/core/theme/app_colors.dart';
 import 'package:fawateery/core/widgets/scale_tap.dart';
 import 'package:fawateery/features/problems/data/models/problem_model.dart';
+import 'package:fawateery/features/private_problem/views/private_problem_view.dart';
 import 'package:fawateery/features/problems/manager/cubit/problems_list_cubit.dart';
 import 'package:fawateery/features/problems/views/problem_workspace_view.dart';
 import 'package:flutter/material.dart';
@@ -103,6 +104,60 @@ class _ProblemsListBodyState extends State<ProblemsListBody> {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: const BorderSide(color: AppColors.border),
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+          child: ScaleTap(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PrivateProblemView()),
+            ),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: AppColors.navy.withValues(alpha: 0.35),
+                ),
+              ),
+              child: const Row(
+                children: [
+                  _GlobeBadge(),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Private problem, or not on Codeforces?',
+                          style: TextStyle(
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          'Open it in the browser and code right below it',
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    size: 22,
+                    color: AppColors.textSecondary,
+                  ),
+                ],
               ),
             ),
           ),
@@ -302,6 +357,28 @@ class _ProblemCard extends StatelessWidget {
 }
 
 // ── Chips ──────────────────────────────────────────────────────────────────
+
+/// The little globe that marks the escape hatch for problems that live
+/// anywhere but Codeforces.
+class _GlobeBadge extends StatelessWidget {
+  const _GlobeBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(7),
+      decoration: BoxDecoration(
+        color: AppColors.navy.withValues(alpha: 0.09),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: const Icon(
+        Icons.language_rounded,
+        size: 17,
+        color: AppColors.navy,
+      ),
+    );
+  }
+}
 
 class _FilterChip extends StatelessWidget {
   const _FilterChip({
