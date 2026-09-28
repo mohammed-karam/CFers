@@ -7,7 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CodeCompilerViewBody extends StatefulWidget {
-  const CodeCompilerViewBody({super.key});
+  const CodeCompilerViewBody({super.key, this.appBar, this.header});
+
+  /// Replaces the default "Code Compiler" app bar, e.g. with the name of the
+  /// problem the student is solving.
+  final PreferredSizeWidget? appBar;
+
+  /// Optional panel pinned directly above the language selector. The problem
+  /// workspace passes the statement here so it sits next to the editor.
+  final Widget? header;
 
   @override
   State<CodeCompilerViewBody> createState() => _CodeCompilerViewBodyState();
@@ -66,9 +74,10 @@ class _CodeCompilerViewBodyState extends State<CodeCompilerViewBody> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: const Color(0xFFF4F6F9),
-      appBar: _buildAppBar(),
+      appBar: widget.appBar ?? _buildAppBar(),
       body: Column(
         children: [
+          if (widget.header != null) widget.header!,
           _buildLanguageSelector(),
           Expanded(child: _buildCodeEditor()),
           _buildStdinToggleBar(),
@@ -181,19 +190,25 @@ class _CodeCompilerViewBodyState extends State<CodeCompilerViewBody> {
     return Container(
       padding: const EdgeInsets.fromLTRB(8, 13, 8, 12),
       color: const Color(0xFF181825),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: List.generate(
-          lineCount,
-          (i) => SizedBox(
-            height: 21.6, // matches font size 13.5 * height 1.6
-            child: Text(
-              '${i + 1}',
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 13.5,
-                color: _lineNumberColor,
-                height: 1.6,
+      // Clipped rather than free-standing: with the problem statement panel
+      // above the editor the gutter can be taller than the editor itself, and
+      // a Column would paint straight over the run button.
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: List.generate(
+            lineCount,
+            (i) => SizedBox(
+              height: 21.6, // matches font size 13.5 * height 1.6
+              child: Text(
+                '${i + 1}',
+                style: const TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 13.5,
+                  color: _lineNumberColor,
+                  height: 1.6,
+                ),
               ),
             ),
           ),
