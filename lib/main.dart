@@ -1,5 +1,7 @@
+import 'package:fawateery/core/storage/app_settings.dart';
+import 'package:fawateery/core/storage/solved_store.dart';
 import 'package:fawateery/core/theme/app_colors.dart';
-import 'package:fawateery/features/materials/views/resources_view.dart';
+import 'package:fawateery/features/shell/views/main_shell_view.dart';
 import 'package:fawateery/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await AppSettings.init();
+  await SolvedStore.init();
 
   runApp(const MyApp());
 }
@@ -39,7 +43,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: const ResourcesView(),
+      home: const MainShellView(),
     );
   }
 }

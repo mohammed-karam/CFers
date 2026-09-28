@@ -25,7 +25,9 @@ class _TimerViewBodyState extends State<TimerViewBody> {
   bool isRunning = false;
   bool hintShown = false;
 
-  late Timer? _timer;
+  // Nullable, not `late`: reading an uninitialised `late` field in dispose()
+  // throws if the student leaves the screen without starting the timer.
+  Timer? _timer;
   final TextEditingController _minutesController = TextEditingController();
   final TextEditingController _ratingController = TextEditingController();
 
@@ -72,6 +74,7 @@ class _TimerViewBodyState extends State<TimerViewBody> {
   @override
   void dispose() {
     _minutesController.dispose();
+    _ratingController.dispose();
     _timer?.cancel();
     isRunning = false;
     super.dispose();

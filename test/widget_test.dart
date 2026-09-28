@@ -1,30 +1,41 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// Smoke test: the app boots straight into the phone shell, with the handle
+// prompt waiting on the Profile tab for a first-time student.
 
+import 'package:fawateery/core/storage/app_settings.dart';
+import 'package:fawateery/features/shell/views/main_shell_view.dart';
+import 'package:fawateery/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:fawateery/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  testWidgets('the app boots into the four-tab shell', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    AppSettings.debugReset();
+
     await tester.pumpWidget(const MyApp());
+    await tester.pumpAndSettle();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.byType(MainShellView), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    final bar = tester.widget<NavigationBar>(find.byType(NavigationBar));
+    expect(
+      bar.destinations
+          .whereType<NavigationDestination>()
+          .map((destination) => destination.label)
+          .toList(),
+      ['Today', 'Problems', 'Learn', 'Profile'],
+    );
+    expect(bar.selectedIndex, 0);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(NavigationBar),
+        matching: find.text('Profile'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Who are you?'), findsOneWidget);
   });
 }
