@@ -4,12 +4,15 @@ import 'package:fawateery/core/storage/solved_store.dart';
 import 'package:fawateery/core/theme/app_colors.dart';
 import 'package:fawateery/core/widgets/custom_app_bar.dart';
 import 'package:fawateery/features/ai_tutor/views/ai_tutor_view.dart';
+import 'package:fawateery/features/code_compiler/data/models/language_model.dart';
 import 'package:fawateery/features/code_compiler/widgets/code_compiler_view_body.dart';
 import 'package:fawateery/features/problems/data/models/problem_model.dart';
 import 'package:fawateery/features/problems/data/models/statement_model.dart';
 import 'package:fawateery/features/problems/manager/cubit/statement_cubit.dart';
 import 'package:fawateery/features/problems/views/statement_reader_view.dart';
 import 'package:fawateery/features/problems/widgets/statement_body.dart';
+import 'package:fawateery/features/submit/views/submit_view.dart';
+import 'package:fawateery/features/submit/widgets/cf_verdict_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -33,10 +36,11 @@ class _ProblemWorkspaceBodyState extends State<ProblemWorkspaceBody> {
   static const double _collapsedHeight = 46;
   static const double _minPanelHeight = 150;
 
-  /// Room the app bar, language bar, stdin bar, run button and output box eat
-  /// below the panel, plus ~200px of editor. The panel is clamped against it
-  /// so the code editor is never squeezed to nothing.
-  static const double _reservedBelowPanel = 540;
+  /// Room the app bar, language bar, stdin bar, run + submit buttons, the
+  /// verdict row and the output box eat below the panel, plus ~180px of
+  /// editor. The panel is clamped against it so the code editor is never
+  /// squeezed to nothing.
+  static const double _reservedBelowPanel = 600;
 
   double _panelHeight = 300;
   bool _collapsed = false;
@@ -98,6 +102,20 @@ class _ProblemWorkspaceBodyState extends State<ProblemWorkspaceBody> {
       context,
       MaterialPageRoute(
         builder: (context) => AiTutorView(initialQuestion: statement.plainText),
+      ),
+    );
+  }
+
+  /// Hand the editor's current contents to Codeforces' own submit page.
+  void _submitCode(String code, LanguageModel language) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SubmitView(
+          problem: widget.problem,
+          code: code,
+          language: language,
+        ),
       ),
     );
   }
@@ -177,6 +195,8 @@ class _ProblemWorkspaceBodyState extends State<ProblemWorkspaceBody> {
                     child: _panelChild(state),
                   ),
                 ),
+          aboveRun: CfVerdictCard(problem: widget.problem),
+          onSubmit: _submitCode,
         );
       },
     );

@@ -12,6 +12,8 @@ class CodeCompilerViewBody extends StatefulWidget {
     this.appBar,
     this.header,
     this.editorFlex = 1,
+    this.aboveRun,
+    this.onSubmit,
   });
 
   /// Replaces the default "Code Compiler" app bar, e.g. with the name of the
@@ -29,6 +31,17 @@ class CodeCompilerViewBody extends StatefulWidget {
   /// private-problem screen so its browser and the editor can divide the
   /// screen between them.
   final int editorFlex;
+
+  /// Optional panel pinned directly above the Run button. The problem
+  /// workspace uses it for the verdict of the student's last submission, so
+  /// the answer is on screen the moment they come back from submitting.
+  final Widget? aboveRun;
+
+  /// When set, a second button appears directly under Run that hands the
+  /// editor's current code and language to the caller — the workspace uses it
+  /// to submit to Codeforces. Screens without a Codeforces problem leave it
+  /// null, and no button shows.
+  final void Function(String code, LanguageModel language)? onSubmit;
 
   @override
   State<CodeCompilerViewBody> createState() => _CodeCompilerViewBodyState();
@@ -95,7 +108,9 @@ class _CodeCompilerViewBodyState extends State<CodeCompilerViewBody> {
           Expanded(flex: widget.editorFlex, child: _buildCodeEditor()),
           _buildStdinToggleBar(),
           if (_showStdin) _buildStdinInput(),
+          if (widget.aboveRun != null) widget.aboveRun!,
           _buildRunButton(),
+          if (widget.onSubmit != null) _buildSubmitButton(),
           _buildOutputPanel(),
         ],
       ),
@@ -325,6 +340,35 @@ class _CodeCompilerViewBodyState extends State<CodeCompilerViewBody> {
           ),
         );
       },
+    );
+  }
+
+  // ── Submit button ────────────────────────────────────────────────────────
+
+  Widget _buildSubmitButton() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+      child: SizedBox(
+        width: double.infinity,
+        child: OutlinedButton.icon(
+          onPressed: () =>
+              widget.onSubmit!(_codeController.text, _selectedLanguage),
+          icon: const Icon(Icons.send_rounded, size: 16),
+          label: const Text(
+            'Submit to Codeforces',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.5),
+          ),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: _appBarColor,
+            backgroundColor: Colors.white,
+            side: BorderSide(color: _appBarColor.withOpacity(0.45)),
+            padding: const EdgeInsets.symmetric(vertical: 13),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
